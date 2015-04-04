@@ -1,0 +1,156 @@
+<html>
+<body>
+<style type="text/css">
+body {
+background-color: #cccccc;
+font-family: Helvetica;
+font-size: 16px;
+}
+
+.wrapper {
+background-color: rgba(100, 200, 200, .8);
+border-radius: 0 0 20px 20px;
+border: 2px solid #333333;
+border-top: 0;
+margin: 0 auto;
+padding: 10px;
+width: 900px;
+}
+
+h1 {
+margin-top: 30px;
+text-align: center;
+}
+
+h3 {
+margin-bottom: 0
+}
+
+.brewer {
+font-style: italic;
+font-size: 12px;
+color: #666666;
+margin-bottom: 10px;
+}
+
+.brewer a {
+color: #666666;
+text-decoration: none;
+}
+
+.brewer a:hover {
+color: #3333ff;
+text-decoration: underline;
+}
+
+.result {
+padding: 10px 20px 20px 20px;
+border-top: 1px dotted #333333;
+}
+
+h1 {
+margin-bottom: 10px;
+}
+
+.searchheader {
+background-color: rgba(100, 200, 200, .8);
+border-radius: 20px 20px 0 0;
+border: 2px solid #333333;
+border-bottom: none;
+margin: 10px auto 0 auto;
+padding: 10px;
+width: 900px;
+}
+
+.searchheader form{
+text-align: center;
+}
+
+.result-description-morelike {
+font-size: 12px;
+font-style: italic;
+}
+
+.result-description-morelike a,
+.facet-wrapper a {
+text-decoration: none;
+color: #666666;
+}
+
+.result-description-morelike a:hover,
+.facet-wrapper a:hover {
+text-decoration: underline;
+color: #3333ff;
+}
+
+.noresults {
+margin-bottom: 12px;
+text-align: center;
+}
+
+.facet-wrapper {
+margin: 0 auto;
+margin-bottom: 10px;
+width: 600px;
+}
+
+.brewery-facet {
+font-size: 12px;
+color: #333333;
+padding-right: 5px;
+border-right: 1px solid #333333;
+}
+
+.brewery-facet:last-child {
+border-right: none;
+}
+
+</style>
+<div class="searchheader">
+<h1>Beer Search</h1>
+  <form action="/search/" method="GET">
+  {{form}}
+  <input type="submit" value="Search" />
+  </form>
+</div>
+<div class="wrapper">
+{% if searchresults %}
+<h2>{{title}} <em>{{em}}</em></h2>
+{% if searchresults.facet_counts %}
+<div class="facet-wrapper">
+  <h3>Brewers matching your query:</h3>
+  {% for brewery, count in searchresults.facet_counts.facet_fields.brewery_name.items %}
+      <span class="brewery-facet"><a href="/brewer/{{brewery|urlencode}}">{{brewery}}</a> ({{count}})</span>
+  {% endfor %}
+</div>
+{% endif %}
+{% for result in searchresults %}
+<div class="result">
+  <h3>{{result.name}}</h3>
+  <div class="brewer">
+    <a href="/brewer/{{result.brewery_name|urlencode}}">{{result.brewery_name}}</a>
+  </div>
+  <div class="result-description">
+    {{result.description}}
+    <span class="result-description-morelike">
+      (<a href="/morelikethis/{{result.id}}">More Beers Like This &hellip;</a>)
+    </span>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+{% if searchresults.numFound == 0 %}
+<div class="noresults">
+<em>No results found</em>
+</div>
+{% endif %}
+<div class="intro">
+This is an example search engine site created for <i>Enterprise Search with Apache Solr</i> 
+from <a href="http://www.robertelwell.info">Robert Elwell</a>, produced for
+<a href="http://packtpub.com/">Packt Publishing</a>. Data is gratefully taken from the 
+<a href="http://openbeerdatabase.com/">Open Beer Database</a>.
+</div>
+{% endif %}
+</div>
+</body>
+</html>
